@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GalaxyForte 4</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #f4f7ff;
+    --card: rgba(255,255,255,0.75);
+    --text: #171a2b;
+    --muted: #73798c;
+    --border: rgba(255,255,255,0.8);
+    --shadow: 0 15px 40px rgba(40,50,100,0.10);
+}
+
+body.dark {
+    --bg: #0c1020;
+    --card: rgba(25,30,52,0.8);
+    --text: #ffffff;
+    --muted: #a5abc0;
+    --border: rgba(255,255,255,0.08);
+    --shadow: 0 15px 40px rgba(0,0,0,0.35);
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background:
+        radial-gradient(circle at 10% 10%, #c7d2ff 0, transparent 30%),
+        radial-gradient(circle at 90% 20%, #ffd5e8 0, transparent 30%),
+        var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 25px;
+    transition: 0.3s;
+}
+
+.dashboard {
+    max-width: 1150px;
+    margin: auto;
+}
+
+/* HEADER */
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo {
+    display: inline-flex;
+    width: 70px;
+    height: 70px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 22px;
+    font-size: 35px;
+    margin-bottom: 15px;
+
+    background: linear-gradient(135deg,#6c63ff,#9b5cff);
+    box-shadow: 0 12px 30px rgba(108,99,255,0.3);
+}
+
+header h1 {
+    font-size: clamp(30px,5vw,48px);
+    margin-bottom: 8px;
+}
+
+header p {
+    color: var(--muted);
+    font-size: 16px;
+}
+
+/* TOP BAR */
+
+.topbar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 35px;
+}
+
+.search {
+    flex: 1;
+    position: relative;
+}
+
+.search input {
+    width: 100%;
+    padding: 15px 20px 15px 48px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    outline: none;
+    background: var(--card);
+    backdrop-filter: blur(15px);
+    color: var(--text);
+    font-size: 15px;
+    box-shadow: var(--shadow);
+}
+
+.search span {
+    position: absolute;
+    left: 18px;
+    top: 14px;
+    font-size: 20px;
+}
+
+.theme {
+    width: 52px;
+    border: none;
+    border-radius: 16px;
+    background: var(--card);
+    color: var(--text);
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+}
+
+/* SECTIONS */
+
+section {
+    margin-bottom: 40px;
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 17px;
+}
+
+.section-title h2 {
+    font-size: 22px;
+}
+
+.section-title span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* GRID */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(190px,1fr));
+    gap: 18px;
+}
+
+/* CARDS */
+
+.button {
+    position: relative;
+    min-height: 145px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    text-decoration: none;
+    color: var(--text);
+
+    border: 1px solid var(--border);
+    border-radius: 22px;
+
+    background: var(--card);
+    backdrop-filter: blur(18px);
+
+    box-shadow: var(--shadow);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.25s,
+        box-shadow 0.25s;
+}
+
+.button::before {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    top: -45px;
+    right: -45px;
+    opacity: 0.15;
+}
+
+.button:hover {
+    transform: translateY(-7px) scale(1.02);
+    box-shadow: 0 20px 45px rgba(40,50,100,0.18);
+}
+
+.icon {
+    font-size: 38px;
+}
+
+.name {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.desc {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* GAME COLORS */
+
+.game::before {
+    background: #6c63ff;
+}
+
+.game .icon {
+    filter: drop-shadow(0 5px 8px rgba(108,99,255,0.25));
+}
+
+/* TOOL COLORS */
+
+.tool::before {
+    background: #00a884;
+}
+
+.tool .icon {
+    filter: drop-shadow(0 5px 8px rgba(0,168,132,0.25));
+}
+
+/* AI */
+
+.ai-card {
+    min-height: 170px;
+    border-radius: 25px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(108,99,255,0.95),
+            rgba(151,78,255,0.95)
+        );
+
+    color: white;
+    box-shadow: 0 18px 45px rgba(108,99,255,0.3);
+}
+
+.ai-card .desc {
+    color: rgba(255,255,255,0.75);
+}
+
+.ai-card .icon {
+    font-size: 45px;
+}
+
+.ai-card::after {
+    content: "AI";
+    position: absolute;
+    right: 25px;
+    bottom: -30px;
+    font-size: 100px;
+    font-weight: bold;
+    opacity: 0.08;
+}
+
+/* HIDE SEARCH RESULTS */
+
+.hidden {
+    display: none !important;
+}
+
+/* MOBILE */
+
+@media(max-width:600px) {
+
+    body {
+        padding: 15px;
+    }
+
+    .grid {
+        grid-template-columns: repeat(2,1fr);
+        gap: 12px;
+    }
+
+    .button {
+        min-height: 125px;
+        border-radius: 18px;
+    }
+
+    .icon {
+        font-size: 30px;
+    }
+
+    .name {
+        font-size: 14px;
+    }
+
+    .desc {
+        display: none;
+    }
+
+    .section-title h2 {
+        font-size: 19px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+<header>
+
+    <div class="logo">🚀</div>
+
+    <h1>My Dashboard</h1>
+
+    <p>Games, daily tools and AI — all in one place</p>
+
+</header>
+
+
+<!-- SEARCH + DARK MODE -->
+
+<div class="topbar">
+
+    <div class="search">
+
+        <span>🔍</span>
+
+        <input
+            type="text"
+            id="search"
+            placeholder="Search games and tools..."
+            onkeyup="searchItems()"
+        >
+
+    </div>
+
+    <button class="theme" onclick="toggleTheme()">
+        🌙
+    </button>
+
+</div>
+
+
+<!-- ================= GAMES ================= -->
+
+<section>
+
+<div class="section-title">
+    <h2>🎮 Games</h2>
+    <span>5 Games</span>
+</div>
+
+<div class="grid">
+
+
+<a class="button game searchable"
+   href="https://galaxygames-ultra.onrender.com/memory.html">
+
+    <div class="icon">🎯</div>
+
+    <div class="name">Memory Match</div>
+
+    <div class="desc">Play now</div>
+
+</a>
+
+
+<a class="button game searchable"
+   href="https://galaxygames-ultra.onrender.com/tictactoe.html">
+
+    <div class="icon">🧩</div>
+
+    <div class="name">Tic Tac Toe </div>
+
+    <div class="desc">Play now</div>
+
+</a>
+
+
+<a class="button game searchable"
+   href="https://galaxygames-ultra.onrender.com/snake.html">
+
+    <div class="icon">🏆</div>
+
+    <div class="name">Snake</div>
+
+    <div class="desc">Play now</div>
+
+</a>
+
+
+<a class="button game searchable"
+   href="https://galaxygames-ultra.onrender.com/2048.html">
+
+    <div class="icon">🚀</div>
+
+    <div class="name">2048 Ultra</div>
+
+    <div class="desc">Play now</div>
+
+</a>
+
+
+<a class="button game searchable"
+   href="https://galaxygames-ultra.onrender.com/breakout.html">
+
+    <div class="icon">☠️</div>
+
+    <div class="name">Breakout Ultra</div>
+
+    <div class="desc">Play now</div>
+
+</a>
+
+<a class="button game searchable"
+   href="https://galaxygames-ultra.onrender.com/hangman.html">
+
+    <div class="icon">🔤</div>
+
+    <div class="name">Hangman</div>
+
+    <div class="desc">Play now</div>
+
+</a>
+
+
+</div>
+
+</section>
+
+
+<!-- ================= TOOLS ================= -->
+
+<section>
+
+<div class="section-title">
+    <h2>🛠️ Daily Life Tools</h2>
+    <span>7 Tools</span>
+</div>
+
+<div class="grid">
+
+
+<a class="button tool searchable"
+   href="tools/tool1/index.html">
+
+    <div class="icon">📝</div>
+
+    <div class="name">Tool 1</div>
+
+    <div class="desc">Open tool</div>
+
+</a>
+
+
+<a class="button tool searchable"
+   href="tools/tool2/index.html">
+
+    <div class="icon">⏱️</div>
+
+    <div class="name">Tool 2</div>
+
+    <div class="desc">Open tool</div>
+
+</a>
+
+
+<a class="button tool searchable"
+   href="tools/tool3/index.html">
+
+    <div class="icon">📅</div>
+
+    <div class="name">Tool 3</div>
+
+    <div class="desc">Open tool</div>
+
+</a>
+
+
+<a class="button tool searchable"
+   href="tools/tool4/index.html">
+
+    <div class="icon">🧮</div>
+
+    <div class="name">Tool 4</div>
+
+    <div class="desc">Open tool</div>
+
+</a>
+
+
+<a class="button tool searchable"
+   href="tools/tool5/index.html">
+
+    <div class="icon">📋</div>
+
+    <div class="name">Tool 5</div>
+
+    <div class="desc">Open tool</div>
+
+</a>
+
+
+<a class="button tool searchable"
+   href="tools/tool6/index.html">
+
+    <div class="icon">🔐</div>
+
+    <div class="name">Tool 6</div>
+
+    <div class="desc">Open tool</div>
+
+</a>
+
+
+<a class="button tool searchable"
+   href="tools/tool7/index.html">
+
+    <div class="icon">🔧</div>
+
+    <div class="name">Tool 7</div>
+
+    <div class="desc">Open tool</div>
+
+</a>
+
+
+</div>
+
+</section>
+
+
+<!-- ================= AI ================= -->
+
+<section>
+
+<div class="section-title">
+    <h2>🤖 Artificial Intelligence</h2>
+</div>
+
+
+<a class="button ai-card searchable"
+   href="https://galaxynova-ai-official.onrender.com">
+
+    <div class="icon">🤖</div>
+
+    <div class="name">Nova AI Assistant</div>
+
+    <div class="desc">
+        Your intelligent assistant
+    </div>
+
+</a>
+
+</section>
+
+
+</div>
+
+
+<script>
+
+/* ================= SEARCH ================= */
+
+function searchItems() {
+
+    let input =
+        document.getElementById("search")
+        .value
+        .toLowerCase();
+
+    let items =
+        document.querySelectorAll(".searchable");
+
+    items.forEach(item => {
+
+        let text =
+            item.innerText.toLowerCase();
+
+        if (text.includes(input)) {
+
+            item.classList.remove("hidden");
+
+        } else {
+
+            item.classList.add("hidden");
+
+        }
+
+    });
+
+}
+
+
+/* ================= DARK MODE ================= */
+
+function toggleTheme() {
+
+    document.body.classList.toggle("dark");
+
+    let button =
+        document.querySelector(".theme");
+
+    if (document.body.classList.contains("dark")) {
+
+        button.innerHTML = "☀️";
+
+        localStorage.setItem("theme","dark");
+
+    } else {
+
+        button.innerHTML = "🌙";
+
+        localStorage.setItem("theme","light");
+
+    }
+
+}
+
+
+/* ================= REMEMBER THEME ================= */
+
+if (localStorage.getItem("theme") === "dark") {
+
+    document.body.classList.add("dark");
+
+    document.querySelector(".theme").innerHTML = "☀️";
+
+}
+
+</script>
+
+</body>
+</html>
