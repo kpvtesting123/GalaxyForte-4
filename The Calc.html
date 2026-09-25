@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glassmorphism Calculator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0f1115;
+      /* Ambient background lights to show off the frosted glass blur */
+      background-image: 
+        radial-gradient(at 20% 20%, rgba(90, 95, 110, 0.35) 0px, transparent 50%),
+        radial-gradient(at 80% 80%, rgba(55, 60, 75, 0.3) 0px, transparent 50%);
+      overflow: hidden;
+    }
+
+    /* Glass Container */
+    .calculator {
+      width: 340px;
+      padding: 24px;
+      border-radius: 28px;
+      background: rgba(30, 34, 42, 0.45);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    }
+
+    /* Screen Display */
+    .display-container {
+      margin-bottom: 20px;
+      padding: 16px 20px;
+      border-radius: 18px;
+      background: rgba(15, 18, 24, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      text-align: right;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .previous-operand {
+      min-height: 20px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.4);
+      letter-spacing: 1px;
+    }
+
+    .current-operand {
+      font-size: 36px;
+      font-weight: 300;
+      color: #f1f2f6;
+      word-wrap: break-word;
+      word-break: break-all;
+    }
+
+    /* Button Grid */
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    button {
+      height: 60px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.04);
+      color: #e5e9f0;
+      font-size: 18px;
+      font-weight: 400;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.15s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    button:active, button.active {
+      transform: translateY(1px);
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Distinct grey styles for operators */
+    button.op {
+      background: rgba(255, 255, 255, 0.08);
+      color: #8da2b5;
+      font-weight: 500;
+    }
+
+    button.op:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: #b0c4de;
+    }
+
+    button.action {
+      color: #d18f8f;
+    }
+
+    button.equals {
+      background: rgba(141, 162, 181, 0.25);
+      border: 1px solid rgba(141, 162, 181, 0.4);
+      color: #ffffff;
+      font-weight: 500;
+      grid-column: span 2;
+    }
+
+    button.equals:hover {
+      background: rgba(141, 162, 181, 0.35);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator">
+    <div class="display-container">
+      <div id="prevDisplay" class="previous-operand"></div>
+      <div id="currDisplay" class="current-operand">0</div>
+    </div>
+
+    <div class="keypad">
+      <button class="action" data-key="Escape" onclick="clearAll()">AC</button>
+      <button class="action" data-key="Backspace" onclick="deleteLast()">⌫</button>
+      <button class="op" data-key="%" onclick="appendOperator('%')">%</button>
+      <button class="op" data-key="/" onclick="appendOperator('/')">÷</button>
+
+      <button data-key="7" onclick="appendNumber('7')">7</button>
+      <button data-key="8" onclick="appendNumber('8')">8</button>
+      <button data-key="9" onclick="appendNumber('9')">9</button>
+      <button class="op" data-key="*" onclick="appendOperator('*')">×</button>
+
+      <button data-key="4" onclick="appendNumber('4')">4</button>
+      <button data-key="5" onclick="appendNumber('5')">5</button>
+      <button data-key="6" onclick="appendNumber('6')">6</button>
+      <button class="op" data-key="-" onclick="appendOperator('-')">−</button>
+
+      <button data-key="1" onclick="appendNumber('1')">1</button>
+      <button data-key="2" onclick="appendNumber('2')">2</button>
+      <button data-key="3" onclick="appendNumber('3')">3</button>
+      <button class="op" data-key="+" onclick="appendOperator('+')">+</button>
+
+      <button data-key="0" onclick="appendNumber('0')">0</button>
+      <button data-key="." onclick="appendNumber('.')">.</button>
+      <button class="equals" data-key="Enter" onclick="calculate()">=</button>
+    </div>
+  </div>
+
+  <script>
+    let currentInput = '0';
+    let previousInput = '';
+    let operation = null;
+    let shouldResetScreen = false;
+
+    const currDisplay = document.getElementById('currDisplay');
+    const prevDisplay = document.getElementById('prevDisplay');
+
+    function updateDisplay() {
+      currDisplay.innerText = currentInput;
+      if (operation != null) {
+        const symbol = operation === '*' ? '×' : operation === '/' ? '÷' : operation;
+        prevDisplay.innerText = `${previousInput} ${symbol}`;
+      } else {
+        prevDisplay.innerText = '';
+      }
+    }
+
+    function appendNumber(number) {
+      if (currentInput === '0' || shouldResetScreen) {
+        if (number === '.') {
+          currentInput = '0.';
+        } else {
+          currentInput = number;
+        }
+        shouldResetScreen = false;
+      } else {
+        if (number === '.' && currentInput.includes('.')) return;
+        currentInput += number;
+      }
+      updateDisplay();
+    }
+
+    function appendOperator(op) {
+      if (operation !== null) calculate();
+      previousInput = currentInput;
+      operation = op;
+      shouldResetScreen = true;
+      updateDisplay();
+    }
+
+    function calculate() {
+      if (operation === null || shouldResetScreen) return;
+      
+      let result;
+      const prev = parseFloat(previousInput);
+      const curr = parseFloat(currentInput);
+
+      if (isNaN(prev) || isNaN(curr)) return;
+
+      switch (operation) {
+        case '+': result = prev + curr; break;
+        case '-': result = prev - curr; break;
+        case '*': result = prev * curr; break;
+        case '/': 
+          if (curr === 0) {
+            alert("Cannot divide by zero");
+            clearAll();
+            return;
+          }
+          result = prev / curr; 
+          break;
+        case '%': result = prev % curr; break;
+        default: return;
+      }
+
+      currentInput = Math.round(result * 100000000) / 100000000; // prevents JS float issues
+      currentInput = currentInput.toString();
+      operation = null;
+      previousInput = '';
+      shouldResetScreen = true;
+      updateDisplay();
+    }
+
+    function clearAll() {
+      currentInput = '0';
+      previousInput = '';
+      operation = null;
+      updateDisplay();
+    }
+
+    function deleteLast() {
+      if (shouldResetScreen) return;
+      if (currentInput.length === 1) {
+        currentInput = '0';
+      } else {
+        currentInput = currentInput.slice(0, -1);
+      }
+      updateDisplay();
+    }
+
+    // Keyboard Support
+    window.addEventListener('keydown', (e) => {
+      let key = e.key;
+
+      if (key >= '0' && key <= '9' || key === '.') {
+        appendNumber(key);
+      } else if (['+', '-', '*', '/', '%'].includes(key)) {
+        appendOperator(key);
+      } else if (key === 'Enter' || key === '=') {
+        e.preventDefault();
+        key = 'Enter';
+        calculate();
+      } else if (key === 'Backspace') {
+        deleteLast();
+      } else if (key === 'Escape' || key.toLowerCase() === 'c') {
+        key = 'Escape';
+        clearAll();
+      }
+
+      // Visual feedback: briefly highlight the matching button
+      const button = document.querySelector(`button[data-key="${key}"]`);
+      if (button) {
+        button.classList.add('active');
+        setTimeout(() => button.classList.remove('active'), 150);
+      }
+    });
+  </script>
+</body>
+</html>
